@@ -1,0 +1,17 @@
+Output dir: E:\01Commodore64\Projects\Kickassembler\Platform\bin
+parsing
+flex pass 1
+flex pass 2
+Output pass
+Writing prg file: E:\01Commodore64\Projects\Kickassembler\Platform\bin\Platform11.prg
+
+Memory Map
+----------
+Default-segment:
+  $0801-$080c Basic Program
+  $0810-$0e06 Program Listing
+  $1000-$1376 Unnamed
+  $2000-$21ff Sprite data
+
+Writing Vice symbol file: E:\01Commodore64\Projects\Kickassembler\Platform\bin\Platform11.vs
+Writing Symbol file: Platform11.sym

@@ -1,0 +1,85 @@
+.label Expand_Sprites=$a94 {
+}
+.label JumpTable=$d31
+.label BORDER_COLOR=$d020
+.label LEFT_SCREEN_EDGE=$a
+.label SPBACKGR_COLL_REG=$d01f
+.label FallSound=$ce8 {
+  .label Sound_IRQ=$d01
+}
+.label Step1Sound=$c82 {
+  .label Sound_IRQ=$c9b
+}
+.label Player_R_table=$d15
+.label STATE_WALK_LEFT=$4
+.label PlayerJumpLSprite=$d2e
+.label Step2Sound=$ca4 {
+  .label Sound_IRQ=$cbd
+}
+.label STATE_FALL=$2
+.label Space_Value=$d14
+.label SCREEN_LOOKUP=$fb
+.label mloop=$89a
+.label STATE_FACE_RIGHT=$20
+.label STATE_WALK_RIGHT=$8
+.label Player_WalkIndex_R=$d0c
+.label setup_sprites=$865
+.label STATE_JUMP=$1
+.label Player_WalkIndex_L=$d0d
+.label BACKGROUND_COLOR=$d021
+.label PrintData2Screen=$b04 {
+}
+.label FallTable=$d43
+.label delay=$af4 {
+}
+.label ScreenMSB=$dee
+.label BelowCharVal=$383
+.label CalcSpriteChar=$ac8 {
+}
+.label JOY_LT=$4
+.label Player_JumpIndex=$d0a
+.label START_WITH_FALLING=$aad {
+}
+.label JOY_DN=$2
+.label Walking_Sound_Left=$c6a {
+}
+.label Player_FallIndex=$d0b
+.label Walking_Sound_Right=$c76 {
+}
+.label MULTICOLOR_3=$d024
+.label STATE_FACE_LEFT=$10
+.label MULTICOLOR_1=$d022
+.label MULTICOLOR_2=$d023
+.label RIGHT_SCREEN_EDGE=$a3
+.label JOY_PORT_2=$dc00
+.label delayfast=$afc {
+}
+.label JOY_UP=$1
+.label JumpAndFall=$a08 {
+}
+.label Player_L_table=$d21
+.label Floor1=$d85
+.label Floor0=$d5d
+.label Player_State=$d0e
+.label Floor2=$dad
+.label JOY_RT=$8
+.label PlayerStandLSprite=$d30
+.label Player_x=$370
+.label GetBelowChar=$c52 {
+}
+.label JOY_ZP=$d11
+.label spritepos=$370
+.label ScreenLSB=$dd5
+.label Collision_Temp=$d10
+.label SpriteCharX=$d12
+.label sprite1_data_pointer=$7f8
+.label Player_Walk=$8af {
+}
+.label SpriteCharY=$d13
+.label JumpSound=$cc6 {
+  .label Sound_IRQ=$cdf
+}
+.label Player_WalkSpeed=$d0f
+.label PlayerStandRSprite=$d2f
+.label JOY_FR=$10
+.label PlayerJumpRSprite=$d2d
