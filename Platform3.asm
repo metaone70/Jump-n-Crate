@@ -13,7 +13,7 @@ BasicUpstart($0820)
 *=$0820 "Program Listing"
 
 start:
-ClearScreen($0400)
+ClearScreen($0400,$20)
 
 SetBorderColor(0)
 SetBackgroundColor(LIGHT_GREY)
