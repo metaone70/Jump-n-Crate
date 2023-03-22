@@ -5,6 +5,7 @@
 // SetBackgroundColor(color)
 // PrintScreen(message,xcoor,ycoor,color,textlength)
 // PrintByteScreen(byteaddress,xcoor,ycoor,color)
+// PrintByteScreen2(bytevalue,screenstart,xcoor,ycoor,color)
 // DrawScreen(screenData,colorData,screenAddress)
 // DrawBitmap(scrData,scrRam,colData)
 // WaitSpaceKey()
@@ -26,8 +27,8 @@
 	bne !loop-
 }
 
-.macro ClearColorRam(clearByte) {
-	lda #clearByte
+.macro ClearColorRam(color) {
+	lda #color
 	ldx #0
 !loop:
 	sta $d800, x
@@ -58,7 +59,7 @@ loop:   jsr $ff9f                // waits for space key
 }
 
 .macro WaitAKey() {
-loop:   jsr $ff9f                // waits for space key
+loop:   jsr $ff9f                // waits for any key
         jsr $ffe4       
         beq loop 
 }
@@ -79,16 +80,15 @@ loop:   jsr $ff9f                // waits for space key
 		pla //Y
 }
 
-.macro waitForRasterLine( line ) {
+.macro waitForRasterLine(line) {
 		lda #line
 !loop:		cmp $d012
 		bne !loop-	
 }
 
-
 .macro PrintScreen(message,xcoor,ycoor,color,textlength) {
-	.var textAddress = $0400+(ycoor*40)+xcoor
-	.var colorAddress = $d800+(ycoor*40)+xcoor
+	.var textAddress = $0400 + (ycoor*40)+xcoor
+	.var colorAddress = $d800+(ycoor*40) + xcoor
 	StoreState()
 	ldx #$00
 !loop:  lda message,x
@@ -233,4 +233,37 @@ loop2:
 !:	        sta textAddress+1
 		RestoreState()
 }
+
+
+.macro PrintChar2Screen(charnumber,screenstart,xcoor,ycoor) {
+.var textAddress = screenstart+(ycoor*40)+xcoor
+.var colorAddress = $d800+(ycoor*40)+xcoor
+
+		lda #charnumber
+		sta textAddress
+
+		ldx #charnumber 	
+		lda $5400,x 				
+		sta colorAddress
+ }
+
+.macro PrintSameChar2Screen(charnumber,screenstart,xcoor,ycoor,number) {
+.var textAddress = screenstart+(ycoor*40)+xcoor
+.var colorAddress = $d800+(ycoor*40)+xcoor
+
+		ldx #$00
+		lda #charnumber
+!:		sta textAddress,x 
+		inx 
+		cpx #number
+		bne !-
+
+		ldy #$00
+		ldx #charnumber 	
+		lda $5400,x 				
+!:		sta colorAddress,y 
+		iny
+		cpy #number 
+		bne !-
+ }
 

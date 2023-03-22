@@ -1,0 +1,10 @@
+CollectSound		effect 0 voice 2  
+AntiCrateSound:		effect 1 voice 2 	
+Step1Sound: 		effect 2 voice 1  
+Step2Sound:			effect 3 voice 1  
+DoorOpenningSound:	effect 4 voice 2  
+RobotBMShhoting:		effect 5 voice 2  
+RobotTShooting:		effect 6 voice 2 
+CollectTimeSound: 	effect 7 voice 2 	
+RobotsMovingSound:	effect 8 voice 3 
+
