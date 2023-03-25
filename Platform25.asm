@@ -1,14 +1,14 @@
 // Default-segment:
-// $0801-$080c Basic Program
-// $0810-$0bf4 Program Listing
-// $2000-$222c PlayerControl
-// $222d-$2337 MoveRobots
-// $2338-$23cc CheckPlayerCollection
-// $4400-$47e7 map_data
-// $5000-$57ff charset_data
-// $5800-$58ff charset_attrib_L1_data
-// $6000-$637f Sprite data
-// $c000-$c3f3 Sound Effects
+  // $0801-$080c Basic Program
+  // $0810-$0cac Program Listing
+  // $2000-$222c PlayerControl
+  // $222d-$2337 MoveRobots
+  // $2338-$23d4 CheckPlayerCollection
+  // $5000-$57ff Character Set Data
+  // $5800-$58ff Character Set Attrrib
+  // $6000-$637f Sprite Data
+  // $7000-$73e7 Map Data
+  // $c000-$c3f3 Sound Effects
 
 .label SpritePos		= $0370 
 .label SCREEN_LOOKUP 	= $f7 				// ($f7 + $f8)
@@ -26,15 +26,15 @@
 
 #import "helper.asm"
 #import "PlayerControl.asm"
-#import "MoveRobots.asm"
-#import "CheckPlayerCollection.asm"
+#import "MoveRobots_R1.asm"
+#import "CheckPlayerCollection_R1.asm"
 
 *=$0801 "Basic Program"
 BasicUpstart($0810)
 
 *=$0810 "Program Listing"
+Start:
 		sei 
-
 		lda #$36			// disable BASIC ROM
       	sta $0001 			// in order to use more ZP
 
@@ -43,14 +43,11 @@ BasicUpstart($0810)
 
 	  	lda #%00011011   	// %0001 1000   Bit #3: 1 = 25 rows,  Bit #4: 1 = Screen on   
 	  	sta $d011
-
 	   	lda #%00011000 		// %0001 1000 Bit #3:1 = 40 columns,  Bit #4: 1 = Multicolor mode on
 	   	sta $d016                
-
-	   	 lda #%00010100   // %0001 0100 bit 1-3=text character address 	%010, 2: $1000-$17FF ($4000+$1000=$5000)
-	   	 sta $d018        // Values %010 and %011 in VIC bank #0 and #2 select Character ROM instead.
+	   	lda #%00010100   // %0001 0100 bit 1-3=text character address 	%010, 2: $1000-$17FF ($4000+$1000=$5000)
+	   	sta $d018        // Values %010 and %011 in VIC bank #0 and #2 select Character ROM instead.
 	        							// 		 bit 4-7=video matrix base address  %0001, %0001, 1: $0400-$07FF ($4400)
-
 	   	lda #%00010110     // %0001 0111 bits 0&1=select 16K bank for VICII %10, 2: Bank #1, $4000-$7FFF
 	   	sta $dd00 
 
@@ -59,48 +56,8 @@ BasicUpstart($0810)
 	   	lda #WHITE			
 	   	sta MULTICOLOR_2
 
-	   	// this part is to set the color of multicolor characters
-	   	// we first get the character # from secreen, we find its attrib 
-	   	// from the attrib table and store it to its color RAM
-	   	// and we do it 4 times (4x256=1000 characters)
-	   	ldy #$00
-	!:	lda SCREEN_ADDRESS,y 		// get the character value from screen position
-		tax 
-	   	lda $5800,x 				// get the attribute of the character
-	   	sta COLOR_RAM,y 			// and store it to its color RAM
-	   	lda SCREEN_ADDRESS+$100,y
-	   	tax 
-	   	lda $5800,x 
-	   	sta COLOR_RAM+$100,y
-	   	lda SCREEN_ADDRESS+$200,y
-	   	tax 
-	   	lda $5800,x 
-	   	sta COLOR_RAM+$200,y
-	   	lda SCREEN_ADDRESS+$300,y
-	   	tax 
-	   	lda $5800,x 
-	   	sta COLOR_RAM+$300,y
-	   	iny 
-	   	bne !-
 
-	   	lda Time_Max				// set the time to max at the beginning
-	   	sta Time_Status
-
-		lda #[STATE_FACE_LEFT + STATE_WALK_LEFT]	// set initial direction as facing right
-		sta Player_State        
-
-		lda Idle_Timeout
-		sta Idle_Time
-
-		lda #<TIMESTATUSADDR		// load the time status address to ZP
-		sta TIME_LOOKUP
-		lda #>TIMESTATUSADDR
-		sta TIME_LOOKUP+1
-		lda #<TIMESTATUSCOLOR		// load time status color to ZP
-		sta TIME_COLOR_LOOKUP
-		lda #>TIMESTATUSCOLOR
-		sta TIME_COLOR_LOOKUP+1	
-
+	   	jsr Initialize
 		jsr SetupSprites 				// setup sprites
 
 // game interrupts
@@ -130,6 +87,7 @@ mloop:
 		jsr CalcSpriteChar
 		jsr JumpAndFall
 		jsr Check_Player_Collection
+		jsr Check_Player_Exit
 		jsr CheckPlayer_Collision
 		jsr delay
 		jsr Expand_Sprites
@@ -140,7 +98,6 @@ mloop:
 Expand_Sprites:	{
 		lda #249								// wait for raster 249 to draw sprites
 		sta $d012
-
 	 	ldx #$00 								// load the sprite y position
 !loop:  	
 		lda SpritePos+$01,x   	// and store it to the hardware sprite register
@@ -163,7 +120,7 @@ CalcSpriteChar: {
 		sbc #6
 		lsr 
 		lsr 
-		sta SpriteCharX
+		sta PlayerCharX
 
 !:	lda Player_y				// get the x sprite coordinate
 		sec 
@@ -171,7 +128,7 @@ CalcSpriteChar: {
 		lsr  							  // divide by 8 -> 1 character is 8 bits long
 		lsr 
 		lsr 
-		sta SpriteCharY		  // store it to character y variable
+		sta PlayerCharY		  // store it to character y variable
 		rts 
 		}
 
@@ -184,18 +141,17 @@ delayfast:
 		waitForRasterLine($10)
 		rts 
 
-
 // Get the character at given coordinates-----------------------------------
 GetBelowChar: {
 		// the screen coordinate table is formed via .fill command. The column addresses
 		// are calculated there
-		lda SpriteCharY 				// get sprite y char value
+		lda PlayerCharY 				// get sprite y char value
 		tay
 		lda ScreenLSB,y 				// load the yth value from screen LSB table
 		sta SCREEN_LOOKUP 				// and store it to the ZP address
 		lda ScreenMSB,y 				// load the yth value from screen LSB table
 		sta SCREEN_LOOKUP + 1 			// and store it to the ZP+1 address
-		lda SpriteCharX
+		lda PlayerCharX
 		tay 											// get sprite x char value 
 		lda (SCREEN_LOOKUP),y 			// load the value at the ZP address by adding the x value
 		sta BelowCharVal 				// store the character value to the variable
@@ -203,7 +159,7 @@ GetBelowChar: {
 	}
 
 AdjustSpriteYCoor: {					// to obtain pixel perfect landing
-		lda SpriteCharY					// by doing the opposite of character calculation routine
+		lda PlayerCharY					// by doing the opposite of character calculation routine
 		asl 
 		asl 
 		asl 
@@ -213,10 +169,9 @@ AdjustSpriteYCoor: {					// to obtain pixel perfect landing
 		rts 
 	}
 
-
 //Get the character that the sprite is on-------------------------------------------------
 GetOnChar: {
-		lda SpriteCharY 						// get sprite y char value
+		lda PlayerCharY 						// get sprite y char value
 		tay
 		dey  												// we decrease it by 1, so the sprite char we are after is just above the floor line
 		lda ScreenLSB,y 						// load the yth value from screen LSB table
@@ -224,7 +179,7 @@ GetOnChar: {
 		lda ScreenMSB,y 						// load the yth value from screen LSB table
 		sta SCREEN_LOOKUP2 + 1 			// and store it to the ZP+1 address
 
-		lda SpriteCharX
+		lda PlayerCharX
 		tay 												// get sprite x char value 
 		lda (SCREEN_LOOKUP2),y 			// load the value at the ZP address by adding the x value
 		sta OnCharVal 							// store the character value to the variable
@@ -244,6 +199,9 @@ CheckPlayer_Collision: {
   		cmp #$01
 		beq !+						// if result = 1, then collision occured
 		jmp !Exit+ 
+
+
+
 									// in order to prevent full degredationf of time due to collision
 									// we are checking for a short counter time of 7 cycles		
 !:		lda Collision_Timer			// check the collision timer if it is 7 (initial value)
@@ -259,9 +217,11 @@ CheckPlayer_Collision: {
 		lda #$00 					// and also reset the collision flag
 		sta Collision_Flag
 
+
+
+
 !Exit:	rts 
 }
-
 
 // Decrease time---------------------------------------------------------------
 Decrease_Time_Status: {
@@ -277,12 +237,12 @@ Decrease_Time_Status: {
 									// $4a = 3/4 full char
 									// $4b = full char	
 
-!:		dec Time_Status_Char 		// decrease the bar by chaning the character
+!:		dec Time_Status_Char 		// decrease the bar by changing the character
 		lda Time_Status_Char		// check the current status character
-		cmp #$47 					// if it is not empty, then continue printing
+		cmp #$4d 					// if it is not empty, then continue printing
 		bcs !print+
 									// here, the status char is empty
-		lda #$4b 					// so load the full char to status char
+		lda #$51 					// so load the full char to status char
 		sta Time_Status_Char
 		dec $fb  					// decrement the LSB of status char, so it is one left char
 		dec $fd 					// also decrement the color address LSB
@@ -290,7 +250,6 @@ Decrease_Time_Status: {
 		cmp #$b3 					// also check if we are at the last time status box
 		bcs !print+ 				// if no, pass on to printing
 		jmp GameOver 				// if yes, then the boxes are all empty, so finih the game 
-
 
 !print:
 		ldy #$00 					// load the status character
@@ -302,7 +261,6 @@ Decrease_Time_Status: {
 		sta (TIME_COLOR_LOOKUP),y 
 
 !Exit:	rts 
-
 }
 
 // Decrease time---------------------------------------------------------------
@@ -319,7 +277,7 @@ Increase_Time_Status: {
 		bcc !+
 
 		ldy #$00
-		lda #$4b 				// full health character
+		lda #$51 						// full health character
 		sta (TIME_LOOKUP),y 
 
 		ldx Time_Status_Char
@@ -334,7 +292,7 @@ Increase_Time_Status: {
 		inc Time_Status
 
 		ldy #$00
-		lda #$4b 				// full health character
+		lda #$51 				// full health character
 		sta (TIME_LOOKUP),y 
 
 		ldx Time_Status_Char
@@ -352,48 +310,31 @@ Increase_Time_Status: {
 		sta (TIME_COLOR_LOOKUP),y 
 
 !Exit:	rts 
-
 }
 
-// Game Over ------------------------------------------------------
+// check if the door is open and the player exits--------------------------------------------
+Check_Player_Exit: {
+		lda DoorOpenFlag			// check if the door is open
+		beq !Exit+					// if not, exit
+		lda PlayerCharY				// check if the player is on the same level as the door
+		cmp DoorYValue 			
+		bne !Exit+ 					// if not, exit
+		lda PlayerCharX
+		cmp DoorXValue
+		bne !Exit+
+		jmp GameOver
+
+!Exit:	rts 
+}
+ 
+// Game Over ------------------------------------------------------------------------------
 GameOver: {
-
-	rts 
-
-
-}
-
-
-
-//Setup sprites------------------------------------------------------------------------------
-SetupSprites: {
-			lda #$ff         			// set multicolor bit
-			sta $d01c					// for sprites 0-7
-
-			lda #BLACK              	// multicolor register
-			sta SPRITE_MULCOL_1     	// black 
-			lda #WHITE					// and white
-			sta SPRITE_MULCOL_2
-
-			ldx #$00 								
-!:			lda SpriteCoordinates,x 
-			sta SpritePos,x 
-			inx 
-			cpx #$0f 					// do it for 8 sprites
-			bne !-
-
-			ldx #$00
-!:			lda SpritePointers,x   		 // set sprite pointer --> VIC BANK + $2000 (128 x 64)
-			sta Sprite_Pointer,x   
-			lda SpriteColors,x 			// load sprite colors from table
-			sta SPRITE_COLOR,x 			// store it to color registers
-			inx 
-			cpx #$08
-			bne !-
-
-			lda #%11111111
-			sta $d015               	// enable all sprites
-			rts 
+		lda #%00 
+		sta $d015 				// turn off all sprites 
+		PrintScreen(GameOverText1,$4400,17,13,1,9)
+		PrintScreen(GameOverText2,$4400,10,14,1,23)
+		WaitAKey()
+		jmp Start 
 }
 
 // Increment score-----------------------------------------------------------
@@ -426,16 +367,14 @@ OpenDoor: {
 // Decrease time as time goes by--------------------------------------------------------
 DecreaseTime: {
 
-		dec Time_Counter								// decrement he time counter
-		bne !Exit+ 											// check if it is if not zero, then exit
+		dec Time_Counter						// decrement he time counter
+		bne !Exit+ 								// check if it is if not zero, then exit
 		jsr Decrease_Time_Status 				// if zero, then counter = 0, so decrease time status
-		lda #$80 												// start the countdown again
+		lda #$80 								// start the countdown again
 		sta Time_Counter
 
-!Exit:
-
+!Exit:	rts 
 }
-
 
 //Playing sound effects------------------------------------------------------------
 Walking_Sound_Left: 
@@ -526,8 +465,73 @@ RobotsMovingSound:
 		jsr $c04a
 		rts 
 
+// Initialize game variables------------------------------------------------------
+Initialize: {
+
+	   	DrawScreen2(MAPDATA,$4400)
+
+	   	lda Time_Max				// set the time to max at the beginning
+	   	sta Time_Status
+		lda #[STATE_FACE_LEFT + STATE_WALK_LEFT]	// set initial direction as facing right
+		sta Player_State        
+		lda Idle_Timeout
+		sta Idle_Time
+		lda #$00 					// door closed at the beginning
+		sta DoorOpenFlag
+		lda #$00  					// initialize the crates collected
+		sta CrateNumber
+
+		lda Time_Max
+		sta Time_Status
+		lda #$51
+		sta Time_Status_Char
+
+		lda #<TIMESTATUSADDR		// load the time status address to ZP
+		sta TIME_LOOKUP
+		lda #>TIMESTATUSADDR
+		sta TIME_LOOKUP+1
+		lda #<TIMESTATUSCOLOR		// load time status color to ZP
+		sta TIME_COLOR_LOOKUP
+		lda #>TIMESTATUSCOLOR
+		sta TIME_COLOR_LOOKUP+1	
+		rts 
+}
+
+//Setup sprites------------------------------------------------------------------------------
+SetupSprites: {
+		lda #$ff         			// set multicolor bit
+		sta $d01c					// for sprites 0-7
+
+		lda #BLACK              	// multicolor register
+		sta SPRITE_MULCOL_1     	// black 
+		lda #WHITE					// and white
+		sta SPRITE_MULCOL_2
+
+		ldx #$00 								
+!:		lda SpriteCoordinates,x 
+		sta SpritePos,x 
+		inx 
+		cpx #$0f 					// do it for 8 sprites
+		bne !-
+
+		ldx #$00
+!:		lda SpritePointers,x   		 // set sprite pointer --> VIC BANK + $2000 (128 x 64)
+		sta Sprite_Pointer,x   
+		lda SpriteColors,x 			// load sprite colors from table
+		sta SPRITE_COLOR,x 			// store it to color registers
+		inx 
+		cpx #$08
+		bne !-
+
+		lda #%11111111
+		sta $d015               	// enable all sprites
+
+		rts 
+}
+
 //variables----------------------------------------------------
 
+.label MAPDATA			= $7000
 .label STATE_JUMP 		= %00000001  // 1
 .label STATE_FALL 		= %00000010  // 2 			
 .label STATE_WALK_LEFT  = %00000100  // 4  	// walk left = 4 + 16 =20    % 0001 0100   $14
@@ -572,15 +576,15 @@ Player_State: 			.byte $00
 Player_WalkSpeed:		.byte $01
 Collision_Temp:			.byte $00
 JOY_ZP: 				.byte $00 
-SpriteCharX:			.byte $00
-SpriteCharY:			.byte $00
-SpriteCharX_Coll:		.byte $00
-SpriteCharY_Coll:		.byte $00
-Space_Value:			.byte $00
+PlayerCharX:			.byte $00
+PlayerCharY:			.byte $00
+PlayerCharX_Coll:		.byte $00
+PlayerCharY_Coll:		.byte $00
+CrateCharValue:			.byte $43
+TimeCapsuleCharValue:	.byte $44 
+AntiCrateCharValue:		.byte $4c  
 Idle_Time:				.byte $00
 Idle_Timeout: 			.byte $14
-ScoreLo:				.byte $00
-ScoreHi:				.byte $00
 CrateNumber:			.byte $00
 Door_Status:			.byte $00
 Robot_B_State:			.byte $01 		// 0=face left 	1=face right
@@ -590,11 +594,18 @@ Robot_T_State:			.byte $00 		// 0=down 	1=up
 Robot_T_Timer:			.byte $00
 Robot_M_Timer:			.byte $00
 Robot_U_Timer:			.byte $00
-DoorOpen:				.byte $00
+Robot_T_Bullet_Flag:	.byte $00
+Robot_M_Bullet_Flag:	.byte $00
+
+DoorOpenFlag:			.byte $00
+DoorXValue:				.byte $24 		// door x char value (=$24)
+DoorYValue:				.byte $16 		// door y char value (=$16)
 Time_Status:			.byte $00 		// holds the time left
-Time_Status_Char:		.byte $4b
-Time_Max:				.byte $30
+Time_Status_Char:		.byte $51
+Time_Max:				.byte $3c
 Time_Counter:			.byte $80
+TEMP_TimeStatus:		.byte $00
+TEMP_Time_Status_Char:	.byte $00
 
 Player_R_table:			.byte $80,$80,$80,$81,$81,$81,$82,$82,$82,$81,$81,$81
 Player_L_table:			.byte $84,$84,$84,$85,$85,$85,$86,$86,$86,$85,$85,$85
@@ -609,9 +620,9 @@ Collision_Flag:			.byte $00
 JumpTable:		.byte $04, $04, $04, $03, $03, $03, $02, $02, $02, $02, $01, $01, $01, $01, $00
 
 FallTable:		.byte $00, $01, $01, $01, $01, $02, $02, $02, $02, $03, $03, $03, $04, $04, $04
-							.byte $04, $04, $04, $04, $04, $04, $04, $04
-							.byte $04, $04, $04, $04, $04, $04, $04, $04
-							.byte $04, $04, $04, $04, $04, $04, $04, $04
+				.byte $04, $04, $04, $04, $04, $04, $04, $04
+				.byte $04, $04, $04, $04, $04, $04, $04, $04
+				.byte $04, $04, $04, $04, $04, $04, $04, $04
 
 // sprite colors table
 SpriteColors:	.byte $0c, $04, $04, $04, $0f, $0c, $0c, $05
@@ -620,24 +631,27 @@ SpriteColors:	.byte $0c, $04, $04, $04, $0f, $0c, $0c, $05
 SpritePointers:	.byte $85, $89, $89, $88, $8a, $8c, $8c, $8d
 
 // Initial sprite coordinates
-SpriteCoordinates:	.byte 140,205,30,205,31,125,97,101,84,58,0,0,20,0,0,20
+SpriteCoordinates:	.byte $8c,$cd,$1e,$cd,$1f,$7d,$61,$65,$54,$3a,0,0,$14,0,0,$14
+
+GameOverText1:	.text "game over" 
+GameOverText2:	.text "hit a key to start over"
 
 ScreenLSB:  	.fill 25, <[$4400 + i * $28]
 ScreenMSB:		.fill 25, >[$4400 + i * $28]
 
 // Sound effects file---------------------------------------------------------------------------
 
-* = $4400 "map_data"
+* = $7000 "Map Data"
 .import binary "Platform (1x1)_4 - (8bpc, 40x25) Map.bin"
 
-* = $5000 "charset_data"
+* = $5000 "Character Set Data"
 .import binary "Platform (1x1)_4 - Chars.bin"
 
-* = $5800  "charset_attrib_L1_data"
+* = $5800  "Character Set Attrrib"
 .import binary "Platform (1x1)_4 - CharAttribs_L1.bin"
 
-*=$6000 "Sprite data"
-.import binary "Sprites.bin"
+*=$6000 "Sprite Data"
+.import binary "Sprites_R1.bin"
 
 *=$c000 "Sound Effects"
 .import c64 "Sounds2.prg"

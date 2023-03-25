@@ -3,10 +3,11 @@
 // ClearColorRam(clearByte)
 // SetBorderColor(color)
 // SetBackgroundColor(color)
-// PrintScreen(message,xcoor,ycoor,color,textlength)
+// PrintScreen(message,screenstart, xcoor,ycoor,color,textlength)
 // PrintByteScreen(byteaddress,xcoor,ycoor,color)
 // PrintByteScreen2(bytevalue,screenstart,xcoor,ycoor,color)
 // DrawScreen(screenData,colorData,screenAddress)
+// DrawScreen2(screenData,screenAddress)
 // DrawBitmap(scrData,scrRam,colData)
 // WaitSpaceKey()
 // WaitAKey()
@@ -86,8 +87,8 @@ loop:   jsr $ff9f                // waits for any key
 		bne !loop-	
 }
 
-.macro PrintScreen(message,xcoor,ycoor,color,textlength) {
-	.var textAddress = $0400 + (ycoor*40)+xcoor
+.macro PrintScreen(message,screenstart, xcoor,ycoor,color,textlength) {
+	.var textAddress = screenstart + (ycoor*40)+xcoor
 	.var colorAddress = $d800+(ycoor*40) + xcoor
 	StoreState()
 	ldx #$00
@@ -148,6 +149,57 @@ loop2:
 //        .byte    $20,$20
 //color:
 //        .byte    $01,$01
+}
+
+// draw the map to screen
+.macro DrawScreen2(screenData,screenAddress) {
+
+	lda #<screenData
+	sta $f7
+	lda #>screenData
+	sta $f8
+	lda #<screenAddress
+	sta $f9 
+	lda #>screenAddress
+	sta $fa
+    	
+        ldx #$00
+loop1:       
+        ldy #$00
+loop2:     
+        lda ($f7),y             
+        sta ($f9),y            
+        iny
+        bne loop2
+        inc $f8
+        inc $fa 
+        inx
+        cpx #$04
+        bne loop1
+
+   	// this part is to set the color of multicolor characters
+   	// we first get the character # from secreen, we find its attrib 
+   	// from the attrib table and store it to its color RAM
+   	// and we do it 4 times (4x256=1000 characters)
+   	ldy #$00
+!:	lda screenAddress,y 		// get the character value from screen position
+	tax 
+   	lda $5800,x 			// get the attribute of the character
+   	sta COLOR_RAM,y 		// and store it to its color RAM
+   	lda screenAddress+$100,y
+   	tax 
+   	lda $5800,x 
+   	sta COLOR_RAM+$100,y
+   	lda screenAddress+$200,y
+   	tax 
+   	lda $5800,x 
+   	sta COLOR_RAM+$200,y
+   	lda screenAddress+$300,y
+   	tax 
+   	lda $5800,x 
+   	sta COLOR_RAM+$300,y
+   	iny 
+   	bne !-
 }
 
 .macro DrawBitmap(scrData,scrRam,colData) {
@@ -233,7 +285,6 @@ loop2:
 !:	        sta textAddress+1
 		RestoreState()
 }
-
 
 .macro PrintChar2Screen(charnumber,screenstart,xcoor,ycoor) {
 .var textAddress = screenstart+(ycoor*40)+xcoor
