@@ -151,7 +151,7 @@ loop2:
 //        .byte    $01,$01
 }
 
-// draw the map to screen
+// draw full map to screen
 .macro DrawScreen2(screenData,screenAddress) {
 
 	lda #<screenData
@@ -201,6 +201,7 @@ loop2:
    	iny 
    	bne !-
 }
+
 
 .macro DrawBitmap(scrData,scrRam,colData) {
 	.var colRam = $d800

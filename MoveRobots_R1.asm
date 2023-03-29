@@ -10,10 +10,10 @@ MoveRobots: {
 .eval var RobotU_y		= SpritePos+7
 .eval var RobotT_x		= SpritePos+8
 .eval var RobotT_y		= SpritePos+9
-.eval var RobotBBul_x 	= SpritePos+10
-.eval var RobotBBul_y 	= SpritePos+11
-.eval var RobotMBul_x 	= SpritePos+12
-.eval var RobotMBul_y 	= SpritePos+13
+.eval var RobotMBul_x 	= SpritePos+10
+.eval var RobotMBul_y 	= SpritePos+11
+.eval var RobotUBul_x 	= SpritePos+12
+.eval var RobotUBul_y 	= SpritePos+13
 .eval var RobotTBul_x 	= SpritePos+14
 .eval var RobotTBul_y 	= SpritePos+15
 
@@ -37,7 +37,7 @@ MoveRobots: {
 
 // RobotB Left Edge Check
 		lda RobotB_x
-		cmp #ROBOTBLEFTEDGE 		// did it reach the left edge?
+		cmp ROBOTBLEFTEDGE 				// did it reach the left edge?
 		bne !RobotM+ 						// if not, go and check RobotM
 		lda #$01
 		sta Robot_B_State 			// yes, so turn right (state=1)
@@ -62,7 +62,7 @@ MoveRobots: {
 
 // RobotB Right Edge Check
 		lda RobotB_x
-		cmp #ROBOTBRIGHTEDGE 		// did it reach the right edge?
+		cmp ROBOTBRIGHTEDGE 		// did it reach the right edge?
 		bne !RobotM+ 				// if not, go and check RobotM
 		lda #$00
 		sta Robot_B_State 			// yes, so turn left (state=0)
@@ -77,7 +77,7 @@ MoveRobots: {
 		bne !++						// if not zero, then going right 
 		dec RobotM_x  				// RobotB is going left 
 		lda RobotM_x
-		cmp #ROBOTMLEFTEDGE 		// did it reach the left edge?
+		cmp ROBOTMLEFTEDGE 		// did it reach the left edge?
 		bne !+ 						// if not, go and check RobotU
 		lda #$01
 		sta Robot_M_State 			// yes, so turn right (state=1)
@@ -90,7 +90,7 @@ MoveRobots: {
 !:  //Robot M right
 		inc RobotM_x  				// RobotM is going left 
 		lda RobotM_x
-		cmp #ROBOTMRIGHTEDGE 		// did it reach the right edge?
+		cmp ROBOTMRIGHTEDGE 		// did it reach the right edge?
 		bne !+ 						// if not, go and check RobotU
 		lda #$00
 		sta Robot_M_State 			// yes, so turn left (state=0)
@@ -111,7 +111,7 @@ MoveRobots: {
 		bne !++						// if not zero, then going right 
 		dec RobotU_x  				// RobotB is going left 
 		lda RobotU_x
-		cmp #ROBOTULEFTEDGE 		// did it reach the left edge?
+		cmp ROBOTULEFTEDGE 		// did it reach the left edge?
 		bne !+ 						// if not, go and check RobotM
 		lda #$01
 		sta Robot_U_State 			// yes, so turn right (state=1)
@@ -124,7 +124,7 @@ MoveRobots: {
 !:  //Robot U right
 		inc RobotU_x  				// RobotB is going right 
 		lda RobotU_x
-		cmp #ROBOTURIGHTEDGE 		// did it reach the right edge?
+		cmp ROBOTURIGHTEDGE 		// did it reach the right edge?
 		bne !+ 						// if not, go and check RobotM
 		lda #$00
 		sta Robot_U_State 			// yes, so turn left (state=0)
@@ -142,7 +142,7 @@ MoveRobots: {
 		bne !+							// if not zero, then going right 
 		dec RobotT_x
 		lda RobotT_x
-		cmp #ROBOTTLEFTEDGE
+		cmp ROBOTTLEFTEDGE
 		bne !++
 		lda #$01
 		sta Robot_T_State
@@ -152,7 +152,7 @@ MoveRobots: {
 !:	//Robot T right
 		inc RobotT_x
 		lda RobotT_x
-		cmp #ROBOTTRIGHTEDGE
+		cmp ROBOTTRIGHTEDGE
 		bne !+
 		lda #$00
 		sta Robot_T_State
@@ -160,7 +160,7 @@ MoveRobots: {
 !:		inc Robot_T_Timer	
 		lda Robot_T_Timer
 		cmp #$20
-		bne !Robot_T_Bullet+ 
+		bne Robot_T_Bullet
 
 		lda Sprite_Pointer+4
 		cmp #$8a
@@ -175,7 +175,7 @@ MoveRobots: {
 		sta Robot_T_Timer
 
 // Robot_T bullet movement
-!Robot_T_Bullet:
+Robot_T_Bullet:
 		lda Robot_T_Bullet_Flag
 		bne !Move_Robot_T_Bullet+
 
@@ -188,7 +188,7 @@ MoveRobots: {
 		lda #$01
 		sta Robot_T_Bullet_Flag
 		jsr RobotTShooting
-		jmp !Robot_M_Bullet+
+		jmp Robot_M_Bullet
 
 !Move_Robot_T_Bullet:
 		inc RobotTBul_y
@@ -201,20 +201,22 @@ MoveRobots: {
 		sta RobotTBul_y
 		lda #$00
 		sta Robot_T_Bullet_Flag
-		jmp !Robot_M_Bullet+
+		jmp Robot_M_Bullet
 
 !:		sta RobotTBul_y
 
-// Robot_T bullet movement
-!Robot_M_Bullet:
+// Robot_M bullet movement -> towards right
+Robot_M_Bullet:
 		lda Robot_M_Bullet_Flag
 		bne !Move_Robot_M_Bullet+ 
 
 		lda Robot_M_State				// check it the Robot_M is looking right
-		beq !Exit+						// 0=face left 	1=face right
-		lda RobotM_x
-		cmp #$31
-		bne !Exit+
+		bne !+							// 0=face left 	1=face right
+		jmp Robot_U_Bullet		
+
+!:		lda RobotM_x
+		cmp RobotMBullet_Trigger
+		bne Robot_U_Bullet
 		lda RobotM_x
 		clc 
 		adc #$03
@@ -223,8 +225,8 @@ MoveRobots: {
 		sta RobotMBul_y
 		lda #$01
 		sta Robot_M_Bullet_Flag
-		jsr RobotBMShhoting	
-		jmp !Exit+
+		jsr RobotMUShhoting
+		jmp Robot_U_Bullet
 
 !Move_Robot_M_Bullet:
 		inc RobotMBul_x
@@ -236,9 +238,46 @@ MoveRobots: {
 		sta RobotMBul_x
 		sta RobotMBul_y
 		sta Robot_M_Bullet_Flag
-		jmp !Exit+
-
+		jmp Robot_U_Bullet
 !:		sta RobotMBul_x
 
-!Exit:	rts 
+// Robot_U bullet movement
+Robot_U_Bullet:
+		lda Robot_U_Bullet_Flag
+		bne !Move_Robot_U_Bullet+ 
+
+		lda Robot_U_State				// check it the Robot_U is looking right
+		beq !+							// 0=face left 	1=face right
+		jmp Exit
+
+!:		
+		lda RobotU_x
+		cmp RobotUBullet_Trigger
+		bne Exit
+		lda RobotU_x
+		sec  
+		sbc #$03
+		sta RobotUBul_x
+		lda RobotU_y
+		sta RobotUBul_y
+		lda #$01
+		sta Robot_U_Bullet_Flag
+		jsr RobotMUShhoting
+		jmp Exit
+
+!Move_Robot_U_Bullet:
+		dec RobotUBul_x
+		dec RobotUBul_x
+		lda RobotUBul_x
+		cmp #$0b
+		bcs !+
+		lda #$00
+		sta RobotUBul_x
+		sta RobotUBul_y
+		sta Robot_U_Bullet_Flag
+		jmp Exit
+
+!:		sta RobotUBul_x
+
+Exit:	rts 
 }

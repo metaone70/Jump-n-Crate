@@ -51,7 +51,6 @@ Player_Walk: {
 		sta Player_State				// for the player state
 		lda #$00 					// and reset the Jump index
 		sta Player_JumpIndex
-		//jsr JumpSound
 		jmp !left+ 					// and then continu checking other directions
 		!:
 
