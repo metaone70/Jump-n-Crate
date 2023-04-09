@@ -132,7 +132,7 @@ Player_Walk: {
 !:	ldx Player_WalkIndex_L			// load the index
 		lda Player_L_table,x 			// get the number from the table in accordance with the index
 		sta Sprite_Pointer		// save it to the sprite pointer for the frame
-		jsr Walking_Sound_Left			// play the sound effect
+		// jsr Walking_Sound_Left			// play the sound effect
 		jmp !SkipMovement+				// left walking completed, exit the checking routine
 
 !right:	lda JOY_ZP						//check 00001000 -> right =0
@@ -211,7 +211,7 @@ Player_Walk: {
 !:		ldx Player_WalkIndex_R	// load the index
 		lda Player_R_table,x 		// get the number from the table in accordance with the index
 		sta Sprite_Pointer			// save it to the sprite pointer for the frame
-		jsr Walking_Sound_Right	// play the sound effect
+		// jsr Walking_Sound_Right	// play the sound effect
 !SkipMovement:
 		rts 
 	}

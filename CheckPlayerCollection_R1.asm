@@ -66,6 +66,8 @@ Check_Player_Collection: {
 
 		jsr CollectTimeSound
 		jsr Increase_Time_Status
+		jsr AddScore 					// add 20 points for time capsule
+		jsr AddScore
 !:		jmp !Skip+
 
 !CheckAntiCrate:
@@ -94,6 +96,7 @@ Check_Player_Collection: {
 		sta (CHARCOLORRAM),y 			// and store the attrib data
 
 		jsr AntiCrateSound
+		jsr DecreaseScore
 		jmp Decrease_Time_Status
 
 !Skip:	rts 

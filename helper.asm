@@ -51,18 +51,39 @@
 }
 
 .macro WaitSpaceKey() {
-	.var key = 0
-loop:   jsr $ff9f                // waits for space key
-        jsr $ffe4       
-        sta key
-        cmp #$20                // compares it to space ($20=32)
-        bne loop 
+!:	lda $dc01
+	and #$10
+	bne !-
 }
 
 .macro WaitAKey() {
 loop:   jsr $ff9f                // waits for any key
         jsr $ffe4       
         beq loop 
+}
+
+.macro WaitJoy1Fire() {
+!Joy1:	lda $dc01
+	lsr 
+	lsr 
+	lsr 
+	lsr 
+	lsr 
+	bcc !+
+	jmp !Joy1-
+!:		
+}
+
+.macro WaitJoy2Fire() {
+!Joy2:	lda $dc00
+	lsr 
+	lsr 
+	lsr 
+	lsr 
+	lsr 
+	bcc !+
+	jmp !Joy2-
+!:		
 }
 
 .macro StoreState() {
@@ -237,11 +258,11 @@ loop2:
 //colData=		$8328
 //colRam=		$d800
 // bitmap settings for $6000
-        // lda #$3b		           
+        // lda #$3b		// %0011 1011           
         // sta $d011
-        // lda #$18 		
+        // lda #$18 		// %0001 1000
         // sta $d016
-        // lda #$78      	
+        // lda #$78      	// %0111 1000
         // sta $d018        
         // lda #$16       
         // sta $dd00 
