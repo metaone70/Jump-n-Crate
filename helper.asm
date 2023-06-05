@@ -75,7 +75,7 @@ loop:   jsr $ff9f                // waits for any key
 }
 
 .macro WaitJoy2Fire() {
-!Joy:	lda $dc00
+!Joy2:	lda $dc00
 	lsr 
 	lsr 
 	lsr 
@@ -340,4 +340,3 @@ loop2:
 		cpy #number 
 		bne !-
  }
-
