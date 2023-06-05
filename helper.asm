@@ -340,4 +340,3 @@ loop2:
 		cpy #number 
 		bne !-
  }
-
