@@ -73,7 +73,7 @@ MoveRobots: {
 		jmp !RobotU+
 
 !:  //Robot M right
-		inc RobotM_x  				// RobotM is going left 
+		inc RobotM_x  				// RobotM is going right 
 		lda RobotM_x
 		cmp ROBOTMRIGHTEDGE 		// did it reach the right edge?
 		bne !+ 						// if not, go and check RobotU
@@ -125,7 +125,7 @@ MoveRobots: {
 !RobotT:  //--------------------------------
 		lda Robot_T_State				// check RobotB state
 		bne !+							// if not zero, then going right 
-		dec RobotT_x
+		dec RobotT_x 					// going left
 		lda RobotT_x
 		cmp ROBOTTLEFTEDGE
 		bne !++

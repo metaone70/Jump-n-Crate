@@ -111,7 +111,7 @@ Player_Walk: {
 		lda PlayerJumpLSprite			// load the falling sprite 
 		sta Sprite_Pointer		// (standing and facing left)
 		jmp !++							// and finish moving
-!:	lda PlayerJumpLSprite			// or load the jumping sprite
+!:		lda PlayerJumpLSprite			// or load the jumping sprite
 		sta Sprite_Pointer		
 
 !:		jmp !SkipMovement+				// and finish moving

@@ -1,16 +1,16 @@
 // Jump'n Crate (C) metesev 2023
-// Start date: 14.03.2023
-// End date: 
+// Start date: 13.03.2023
+// End date: 09.04.2023
 // Default-segment:
   // $0801-$080c Basic Program
-  // $0810-$132a Program Listing
+  // $0810-$132e Program Listing
   // $1800-$1a7f Variables and tables
   // $2000-$2226 PlayerControl
   // $2227-$2441 MoveRobots
   // $2442-$24f0 CheckPlayerCollection
   // $4800-$4b7f Sprite Data
   // $5000-$57ff Character Set Data
-  // $5800-$58ff Character Set Attrrib
+  // $5800-$58ff Character Set Attrib
   // $6000-$8710 Bitmap screen
   // $9000-$93dc External sound driver
   // $a000-$b387 Map Data
@@ -63,7 +63,7 @@ BasicUpstart($0810)
       sta $01 			// in order to use more ZP
 
       lda #$a7 			// when hit runstop/restore
-      sta $0318 		// nothing happenes... it posints to the  
+      sta $0318 		// nothing happens... it points to the  
       lda #$08    	// INT section
       sta $0319
 
@@ -73,7 +73,7 @@ BasicUpstart($0810)
 // prepare screen for bitmap graphics
       lda #$3b		           // %0011 1011 enable bitmap, show screen and 25 rows
       sta $d011
-      lda #$18 							// %0001 1000  enable multicolor bitmap mode and 40 cols 
+      lda #$18 							// %0001 1000  enable multi-color bitmap mode and 40 cols 
       sta $d016
       lda #$78      				// %0111 1000  video matrix and text relative addresses
       sta $d018        
@@ -87,11 +87,11 @@ BasicUpstart($0810)
 
       jsr IntroSong
 			DrawBitmap($7f40,$5c00,$8328)
-			WaitAKey()
+ 			WaitSpaceKey()
 
 	  	lda #%00011011   		// %0001 1000   Bit #3: 1 = 25 rows,  Bit #4: 1 = Screen on   
 	  	sta $d011
-	   	lda #%00011000 			// %0001 1000 Bit #3:1 = 40 columns,  Bit #4: 1 = Multicolor mode on
+	   	lda #%00011000 			// %0001 1000 Bit #3:1 = 40 columns,  Bit #4: 1 = Multi-color mode on
 	   	sta $d016                
 	   	lda #%00010100   		// %0001 0100 bit 1-3=text character address 	%010, 2: $1000-$17FF ($4000+$1000=$5000)
 	   	sta $d018       	  // Values %010 and %011 in VIC bank #0 and #2 select Character ROM instead.
@@ -380,7 +380,7 @@ Decrease_Time_Status: {
 			lda $fb 
 			cmp #$b3 								// also check if we are at the last time status box
 			bcs !print+ 						// if no, pass on to printing
-			jmp GameOver_Bad 				// if yes, then the boxes are all empty, so finih the game 
+			jmp GameOver_Bad 				// if yes, then the boxes are all empty, so finish the game 
 
 !print:
 			ldy #$00 								// load the status character
@@ -521,13 +521,13 @@ GameOver_Good: {
    		cpy #$0c
    		bne !Cl-
 
-   		ldx Time_Status 					// get the remaning time
+   		ldx Time_Status 					// get the remaining time
 !: 		StoreState()
 			jsr CollectSound
 			waitForRasterLine($f0)
 			waitForRasterLine($f0)
 			RestoreState()
-			inc $46bc 								// and add 10 for each time remaning 
+			inc $46bc 								// and add 10 for each time remaining 
 			lda $46bc
 			cmp #$2b
 			bcc !+
@@ -891,10 +891,10 @@ Initialize: {
 
 //Setup sprites------------------------------------------------------------------------------
 SetupSprites: {
-			lda #$ff         						// set multicolor bit
+			lda #$ff         						// set multi-color bit
 			sta $d01c										// for sprites 0-7
 
-			lda #BLACK              		// multicolor register
+			lda #BLACK              		// multi-color register
 			sta SPRITE_MULCOL_1    			// black 
 			lda #WHITE									// and white
 			sta SPRITE_MULCOL_2
@@ -925,7 +925,7 @@ SetupSprites: {
 AdvanceLevel: {
 
 			jsr LevelSong
-			inc CurrentLevel 						// check ccurent level
+			inc CurrentLevel 						// check current level
 			lda CurrentLevel
 			cmp #$06 										// if it is 6 (>5), then the game is over.
 			bcc !+
@@ -1047,7 +1047,7 @@ AdvanceLevel: {
 			lda ($a8),y 
 			sta DoorYValue
 
-			inc $ac  									// load the level's bacground character
+			inc $ac  									// load the level's background character
 			ldy #$00 									// it will be replaced as the player gets the 
 			lda ($ac),y  							// crates, anticrates and time capsules
 			sta ScreenBGChar
@@ -1110,8 +1110,8 @@ DoorLocation:				.byte $24,$16 		// level 1
 
 // 	x coordinates						RBR,RBL,RMR,RML,RUR,RUL,RTR,RTL
 RobotEdgeCoordinates:	.byte $9c,$0e,$33,$0e,$67,$45,$9c,$10 		// level 1
-											.byte $9c,$0e,$3a,$1b,$76,$4d,$9c,$10 		// level 2  RobotM üstte, RobotU ortada
-											.byte $9c,$0e,$2d,$0e,$9e,$7c,$9c,$10 		// level 3  RobotM üstte, RobotU ortada
+											.byte $9c,$0e,$3a,$1b,$76,$4d,$9c,$10 		// level 2  RobotM on top, RobotU in the middle
+											.byte $9c,$0e,$2d,$0e,$9e,$7c,$9c,$10 		// level 3  RobotM on top, RobotU in the middle
 											.byte $9c,$0e,$76,$35,$71,$3a,$9c,$10 		// level 4
 											.byte $9c,$0e,$67,$44,$7b,$32,$9c,$10 		// level 5
 
@@ -1196,7 +1196,7 @@ DoorYValue:						.byte $00
 Time_Status:					.byte $00 		// holds the time left
 Time_Status_Char:			.byte $51			// starts with the full character
 Time_Max:							.byte $3c 		// time max is 60
-Time_Counter:					.byte $70
+Time_Counter:					.byte $70 		// timer value for the decrease time routine
 
 Player_R_table:				.byte $20,$20,$20,$21,$21,$21,$22,$22,$22,$21,$21,$21
 Player_L_table:				.byte $24,$24,$24,$25,$25,$25,$26,$26,$26,$25,$25,$25
@@ -1230,7 +1230,7 @@ AdvanceLevelText3:	.text "  press fire to continue  "
 ScreenLSB:  	.fill 25, <[$4400 + i * $28]		// y addresses of the 1st column
 ScreenMSB:		.fill 25, >[$4400 + i * $28]
 
-StatusRow:		.fill 40, 0 		
+StatusRow:		.fill 40, 0 		// status row temporary location (between levels)
 Score_temp:		.fill 4,0 			// the charset array to be used as buffer
 
 // sound effects
@@ -1250,11 +1250,11 @@ sfx_collect_time:				.byte $00,$00,$f8,$44,$20,$36,$1d,$02,$11,$01,$00,$08
 * = $5000 "Character Set Data"
 .import binary "Platform (1x1)_7 - Chars.bin"
 
-* = $5800  "Character Set Attrrib"
+* = $5800  "Character Set Attrib"
 .import binary "Platform (1x1)_7 - CharAttribs_L1.bin"
 
 * = $6000 "Bitmap screen"
-.import binary "Jump'n'crate8.prg",2
+.import binary "Jump'n'crate_bitmap.prg",2
 
 * = $9000 "External sound driver"
 .import c64 "sfxdriver-9000-standard.prg"
@@ -1263,7 +1263,7 @@ sfx_collect_time:				.byte $00,$00,$f8,$44,$20,$36,$1d,$02,$11,$01,$00,$08
 .import binary "Platform (1x1)_7 - (8bpc, 40x125) Map.bin"
 
 * = $b400 "Info screen"
-.import binary "Info_screen.bin"
+.import binary "Platform-info - (8bpc, 40x25) Map.bin"
 
 * = $b800 "Final (success) screen"
 .import binary "Final_screen_1.bin"

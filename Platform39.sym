@@ -1,0 +1,217 @@
+.label MoveRobots=$2227 {
+  .label Robot_T_Bullet=$2368
+  .label Robot_M_Bullet=$23a7
+  .label Robot_U_Bullet=$23f4
+  .label Exit=$2441
+}
+.label Expand_Sprites=$90d {
+}
+.label BORDER_COLOR=$d020
+.label LEFT_SCREEN_EDGE=$e
+.label AdjustSpriteYCoor=$96b {
+}
+.label Robot_B_State=$18da
+.label Initialize=$f6e {
+}
+.label SPBACKGR_COLL_REG=$d01f
+.label Idle_Time=$18d6
+.label ROBOTTLEFTEDGE=$18c5
+.label Robot_U_Delay_Flag=$18e5
+.label Player_R_table=$18f1
+.label STATE_WALK_LEFT=$4
+.label AddScore=$d88 {
+}
+.label SetupSprites=$1063 {
+}
+.label TimeCapsuleCharValue=$18d4
+.label Robot_M_State=$18db
+.label RobotMBullet_Trigger=$18e6
+.label BulletMCollided=$9f8 {
+}
+.label SCREEN_LOOKUP=$f7
+.label LevelSong=$f38 {
+  .label lev=$f4a
+}
+.label PlayerCharX_Coll=$18d1
+.label ROBOTMLEFTEDGE=$18c1
+.label AntiCrateCharValue=$18d5
+.label PlayerShot=$f06
+.label STATE_WALK_RIGHT=$8
+.label Player_WalkIndex_R=$18c9
+.label STATE_JUMP=$1
+.label DoorXValue=$18eb
+.label Time_Status_Char=$18ee
+.label Player_WalkIndex_L=$18ca
+.label delay=$943 {
+}
+.label BulletTCollided=$a1c {
+}
+.label CrateCharValue=$18d3
+.label BelowCharVal=$383
+.label CalcSpriteChar=$92b {
+}
+.label JOY_LT=$4
+.label Player_JumpIndex=$18c7
+.label CollectSound=$eca
+.label JOY_DN=$2
+.label COLOR_RAM=$d800
+.label sfx_door_open=$1a7a
+.label RIGHT_SCREEN_EDGE=$9e
+.label ROBOTULEFTEDGE=$18c3
+.label PlayerCharY=$18d0
+.label delayfast=$94b {
+}
+.label PlayerCharX=$18cf
+.label TIMESTATUSCOLOR=$dbbe
+.label SCREEN_ADDRESS=$4400
+.label Decrease_Time_Status=$a42 {
+}
+.label Robot_U_State=$18dc
+.label SpriteColors=$1800
+.label TIME_COLOR_LOOKUP=$fd
+.label Time_Status=$18ed
+.label JOY_RT=$8
+.label ROBOTBRIGHTEDGE=$18be
+.label StatusRow=$1a12
+.label Increase_Time_Status=$a79 {
+}
+.label Player_x=$370
+.label JOY_ZP=$18ce
+.label SPRITECOORD=$d000
+.label ScreenLSB=$19e0
+.label ScreenBGTable=$1914
+.label Collision_Temp=$18cd
+.label TimeChar_Temp=$1913
+.label AntiCrateSound=$ed4
+.label DoorLocation=$1880
+.label Player_WalkSpeed=$18cc
+.label PlayerJumpRSprite=$1909
+.label Sprite_Collision=$190d
+.label JumpTable=$1919
+.label Start=$8a9
+.label TimeRow_Temp=$1912
+.label OpenDoor=$dee {
+}
+.label Idle_Timeout=$18d7
+.label AdvanceLevelText1=$1992
+.label AdvanceLevelText2=$19ac
+.label GetOnChar=$978 {
+}
+.label CheckPlayer_Collision_Robots=$998 {
+}
+.label AdvanceLevelText3=$19c6
+.label Door_Status=$18d9
+.label CheckPlayer_Collision=$991 {
+}
+.label PlayerJumpLSprite=$190a
+.label Sprite_Pointer=$47f8
+.label Collision_Timer=$190e
+.label Robot_U_Timer=$18e0
+.label DecreaseScore=$daa {
+}
+.label ROBOTURIGHTEDGE=$18c2
+.label STATE_FALL=$2
+.label Robot_M_Timer=$18df
+.label TIMESTATUSADDR=$47be
+.label ROBOTTRIGHTEDGE=$18c4
+.label Robot_U_Bullet_Flag=$18e3
+.label mloop=$8e0
+.label Check_Player_Exit=$ae0 {
+}
+.label STATE_FACE_RIGHT=$20
+.label MuteSound=$f10
+.label DelayTemp=$18e8
+.label GameOverSong=$f53 {
+  .label lev=$f65
+}
+.label Robot_T_Bullet_Flag=$18e1
+.label DoorOpenFlag=$18ea
+.label BACKGROUND_COLOR=$d021
+.label FallTable=$1928
+.label CollectTimeSound=$ede
+.label RobotEdgeCoordinates=$188a
+.label Robot_M_Delay_Flag=$18e4
+.label GameOver_Bad=$c99 {
+}
+.label SPRITE_COLOR=$d027
+.label Robot_T_State=$18dd
+.label Time_Counter=$18f0
+.label ScreenMSB=$19f9
+.label RobotUBullet_Trigger=$18e7
+.label Score_temp=$1a3a
+.label SCREEN_LOOKUP2=$f9
+.label CHARCOLORRAM=$96
+.label sfx_collect_time=$1a92
+.label Player_FallIndex=$18c8
+.label Check_Robot_Collision_Timer=$a2e {
+}
+.label Check_Player_Collection=$2442 {
+}
+.label MULTICOLOR_3=$d024
+.label sfx_player_hit=$1a86
+.label STATE_FACE_LEFT=$10
+.label MULTICOLOR_1=$d022
+.label MULTICOLOR_2=$d023
+.label OnCharVal=$384
+.label JOY_PORT_2=$dc00
+.label PlayerCharY_Coll=$18d2
+.label RobotTShooting=$ef2
+.label TIME_LOOKUP=$fb
+.label ROBOTBLEFTEDGE=$18bf
+.label INT=$8b5
+.label RobotU_Bullet_Table=$18b8
+.label JOY_UP=$1
+.label Robot_M_Bullet_Flag=$18e2
+.label CrateNumber=$18d8
+.label GameOver_Good=$af9 {
+}
+.label SpritePointers=$1808
+.label SpriteCoordinates=$1830
+.label sfx_laser3=$1a6e
+.label RobotM_Bullet_Table=$18b2
+.label SPRITE_MULCOL_2=$d026
+.label sfx_laser2=$1a62
+.label SpritePos=$370
+.label SPRITE_MULCOL_1=$d025
+.label sfx_laser1=$1a56
+.label JumpAndFall=$2190 {
+}
+.label ROBOTMRIGHTEDGE=$18c0
+.label Player_L_table=$18fd
+.label sfx_collect_crate=$1a3e
+.label Player_State=$18cb
+.label CheckPlayer_Collision_Bullets=$9cb {
+}
+.label BorderChange=$eaa {
+}
+.label IntroSong=$f16 {
+  .label lev=$f28
+}
+.label PlayerStandLSprite=$190c
+.label GetBelowChar=$953 {
+}
+.label BulletUCollided=$a0a {
+}
+.label Robot_T_Timer=$18de
+.label CurrentLevel=$18c6
+.label ScreenBGChar=$1910
+.label GameOverBadText=$194f
+.label sfx_collect_anticrate=$1a4a
+.label GameOverGoodText2=$1975
+.label GameOverGoodText1=$1965
+.label Temp_x=$1911
+.label InfoScreen=$134f {
+}
+.label Player_Walk=$2000 {
+}
+.label DecreaseTime=$ebc {
+}
+.label AdvanceLevel=$1096 {
+}
+.label DoorYValue=$18ec
+.label RobotMUShhoting=$ee8
+.label DoorOpeningSound=$efc
+.label PlayerStandRSprite=$190b
+.label JOY_FR=$10
+.label Time_Max=$18ef
+.label Collision_Flag=$190f
