@@ -1246,12 +1246,16 @@ TimeChar_Temp:			.byte $00
 
 ScreenBGTable:			.byte $3e,$52,$58,$5e,$68			// character numbers to replace the crates etc.
 
-JumpTable:			.byte $04, $04, $04, $03, $03, $03, $03, $02, $02, $02, $01, $01, $01, $01, $00
+JumpTable:     .fill 15, 4*sin(toRadians(90+i*360/60))
+FallTable:      .fill 15, 4*sin(toRadians(0+i*360/60))
+                .fill 16, $04
 
-FallTable:				.byte $00, $01, $01, $01, $01, $01, $02, $02, $02, $03, $03, $03, $04, $04, $04
-						.byte $04, $04, $04, $04, $04, $04, $04, $04
-						.byte $04, $04, $04, $04, $04, $04, $04, $04
-						.byte $04, $04, $04, $04, $04, $04, $04, $04
+//JumpTable:                .byte $04, $04, $04, $03, $03, $03, $03, $02, $02, $02, $01, $01, $01, $01, $00
+
+//FallTable:				.byte $00, $01, $01, $01, $01, $01, $02, $02, $02, $03, $03, $03, $04, $04, $04
+//						.byte $04, $04, $04, $04, $04, $04, $04, $04
+//						.byte $04, $04, $04, $04, $04, $04, $04, $04
+//						.byte $04, $04, $04, $04, $04, $04, $04, $04
 
 GameOverBadText: 		.text "sorry, the time is up."
 GameOverGoodText1:		.text "congratulations."
