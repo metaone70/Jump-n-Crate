@@ -1246,7 +1246,7 @@ TimeChar_Temp:			.byte $00
 
 ScreenBGTable:			.byte $3e,$52,$58,$5e,$68			// character numbers to replace the crates etc.
 
-JumpTable:     .fill 15, 4*sin(toRadians(90+i*360/60))
+JumpTable:      .fill 15, 4*sin(toRadians(90+i*360/60))
 FallTable:      .fill 15, 4*sin(toRadians(0+i*360/60))
                 .fill 16, $04
 
