@@ -4,9 +4,9 @@ Platform game for Commodore 64
 
 
 
-![jump-n-crate](D:\repo\jump-n-crate\Jump-n-Crate\jump-n-crate.png)
+![jump-n-crate](jump-n-crate.png)
 
-
+## Info
 
 You need your help to eliminate the deadly robots...
 
@@ -18,7 +18,7 @@ if you finish all 5 locations on time, the world will be saved...
 
 
 
-**Executable:**
+### Executable
 
 [bin/jumpncrate.prg](bin/jumpncrate.prg)
 
