@@ -1292,7 +1292,7 @@ sfx_collect_time:		.byte $00,$00,$f8,$44,$20,$36,$1d,$02,$11,$01,$00,$08
 .import binary "Platform (1x1)_7 - CharAttribs_L1.bin"
 
 * = $6000 "Bitmap screen"
-.import binary "Jump'n'crate_bitmap.prg",2
+.import binary "Jump'n'crate_bitmap.kla",2
 
 * = $9000 "External sound driver"
 .import c64 "sfxdriver-9000-standard.prg"
