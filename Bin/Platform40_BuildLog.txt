@@ -1,0 +1,12 @@
+parsing
+flex pass 1
+.import binary "assets/Jump'n'crate_bitmap.kla",2
+
+* = $9000 "External sound driver"
+.import c64 "sfxdriver-9000-standard.prg"
+^
+
+Error: Can't open file 'sfxdriver-9000-standard.prg'
+at line 1298, column 1 in Platform40.asm
+
+
