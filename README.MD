@@ -20,5 +20,5 @@ if you finish all 5 locations on time, the world will be saved...
 
 ### Executable
 
-[bin/jumpncrate.prg](bin/jumpncrate.prg)
+[bin/jumpncrate.prg](Bin/jumpncrate.prg)
 
