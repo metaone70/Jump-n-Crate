@@ -1246,16 +1246,12 @@ TimeChar_Temp:			.byte $00
 
 ScreenBGTable:			.byte $3e,$52,$58,$5e,$68			// character numbers to replace the crates etc.
 
-JumpTable:      .fill 15, 4*sin(toRadians(90+i*360/60))
-FallTable:      .fill 15, 4*sin(toRadians(0+i*360/60))
-                .fill 16, $04
+JumpTable:				.byte $04, $04, $04, $03, $03, $03, $02, $02, $02, $01, $01, $01, $01, $01, $00
 
-//JumpTable:                .byte $04, $04, $04, $03, $03, $03, $03, $02, $02, $02, $01, $01, $01, $01, $00
-
-//FallTable:				.byte $00, $01, $01, $01, $01, $01, $02, $02, $02, $03, $03, $03, $04, $04, $04
-//						.byte $04, $04, $04, $04, $04, $04, $04, $04
-//						.byte $04, $04, $04, $04, $04, $04, $04, $04
-//						.byte $04, $04, $04, $04, $04, $04, $04, $04
+FallTable:				.byte $00, $01, $01, $01, $01, $01, $02, $02, $02, $03, $03, $03, $04, $04, $04
+						.byte $04, $04, $04, $04, $04, $04, $04, $04
+						.byte $04, $04, $04, $04, $04, $04, $04, $04
+						.byte $04, $04, $04, $04, $04, $04, $04, $04
 
 GameOverBadText: 		.text "sorry, the time is up."
 GameOverGoodText1:		.text "congratulations."
@@ -1283,31 +1279,31 @@ sfx_collect_time:		.byte $00,$00,$f8,$44,$20,$36,$1d,$02,$11,$01,$00,$08
 // Sound effects file---------------------------------------------------------------------------
 
 *=$4800 "Sprite Data"
-.import binary "assets/Sprites_R1.bin"
+.import binary "Sprites_R1.bin"
 
 * = $5000 "Character Set Data"
-.import binary "assets/Platform (1x1)_7 - Chars.bin"
+.import binary "Platform (1x1)_8 - Chars.bin"
 
 * = $5800  "Character Set Attrib"
-.import binary "assets/Platform (1x1)_7 - CharAttribs_L1.bin"
+.import binary "Platform (1x1)_8 - CharAttribs_L1.bin"
 
 * = $6000 "Bitmap screen"
-.import binary "assets/Jump'n'crate_bitmap.kla",2
+.import binary "Jump'n'crate_bitmap_2.prg",2
 
 * = $9000 "External sound driver"
 .import c64 "sfxdriver-9000-standard.prg"
 
 * = $a000 "Map Data"
-.import binary "assets/Platform (1x1)_7 - (8bpc, 40x125) Map.bin"
+.import binary "Platform (1x1)_8 - (8bpc, 40x125) Map.bin"
 
 * = $b400 "Info screen"
-.import binary "assets/Platform-info - (8bpc, 40x25) Map.bin"
+.import binary "Platform-info - (8bpc, 40x25) Map.bin"
 
 * = $b800 "Final (success) screen"
-.import binary "assets/Final1 - (8bpc, 40x25) Map.bin"
+.import binary "Final1 - (8bpc, 40x25) Map.bin"
 
 * = $bc00 "Final (fail) screen"
-.import binary "assets/Final2 - (8bpc, 40x25) Map.bin"
+.import binary "Final2 - (8bpc, 40x25) Map.bin"
 
 *=$c000 "Song and jingles"
 .import c64 "jumpncratesong.prg"
