@@ -15,7 +15,7 @@ You have limited time, which is degraded by hits, so avoid the robots and their 
 if you finish all 5 locations on time, the world will be saved...
 
 
-
+Intro screen and other assistance by Wizofwor...
 
 
 ### Executable
