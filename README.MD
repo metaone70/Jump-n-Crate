@@ -4,7 +4,21 @@ Platform game for Commodore 64
 
 
 
-**Executable:**
+![jump-n-crate](jump-n-crate.png)
 
-[bin/Platform39.prg](bin/Platform39.prg)
+## Info
+
+You need your help to eliminate the deadly robots...
+
+You have limited time, which is degraded by hits, so avoid the robots and their bulltes by all means...
+
+if you finish all 5 locations on time, the world will be saved...
+
+
+
+
+
+### Executable
+
+[bin/jumpncrate.prg](Bin/jumpncrate.prg)
 
