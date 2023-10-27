@@ -20,5 +20,5 @@ Spacial thanks go to wizofwor for the intro screen and miscellenaous updates...
 
 ### Executable
 
-[bin/jumpncrate.prg](Bin/jumpncrate.prg)
+[bin/jumpncrate_v1.40.prg](Bin/jumpncrate_v1.40.prg)
 
